@@ -29,3 +29,7 @@ Si è scelto di fare in modo di tenere traccia per ogni blocco della regola sull
 5. Il metodo printBalance riceve la blockchain come parametro anziché mantenerne un riferimento interno, rispecchiando il comportamento dei wallet reali (es. MetaMask), che non sono legati in modo permanente a una singola rete ma interrogano lo stato on-demand alla rete correntemente selezionata.
 
 1000. DESCRIZIONE-SIMULAZIONE: Si sceglie di creare una blockchain e 3 wallet. L'obiettivo è di simulare un attacco di tampering
+
+
+
+DA CONTINUARE
