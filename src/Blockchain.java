@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Collections;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +29,11 @@ public class Blockchain {
         return true;
     }
 
+    // Exposes a read-only view of the ledger
+    public List<Block> getLedger() {
+        return Collections.unmodifiableList(this.ledger);
+    }
+
     public Block getLastBlock() {
         return this.ledger.get(this.ledger.size()-1);
     }
@@ -43,6 +49,15 @@ public class Blockchain {
         return balance;
     }
 
+    // SOLO PER IL BOOTSTRAP INIZIALE DEI FONDI — bypassa il controllo di saldo 
+    // (che non avrebbe senso per l'iniezione di fondi nel sistema), 
+    // ma mantiene comunque la validazione di firma/binding
+    public boolean injectGenesisFunds(Transaction t) {
+        if (!t.isValid()) return false; // firma e binding restano obbligatori
+        mempool.add(t);
+        return true;
+    }
+
     public Block mineBlock() {
         if (mempool.isEmpty()) {
             return null;
@@ -52,6 +67,7 @@ public class Blockchain {
         newBlock.mine(DIFFICULTY);
         this.ledger.add(newBlock);
         mempool.clear();
+        System.out.println("[BLOCKCHAIN]: A new Block has been mined");
         return newBlock;
     }
 
@@ -75,6 +91,20 @@ public class Blockchain {
             if (!current.verifyProofOfWork(current.computeBlockHash(), current.getDifficulty())) return false;
         }
         return true;
+    }
+
+    public void printChainStatus() {
+        System.out.println("\n=== Blockchain status ===");
+        System.out.println("Chain length: " + ledger.size() + " blocks");
+        System.out.println("Pending transactions in mempool: " + mempool.size());
+        System.out.println("Ledger integrity: " + checkLedgerIntegrity());
+        System.out.println("--------------------------");
+        for (int i = 0; i < ledger.size(); i++) {
+            Block b = ledger.get(i);
+            String hashPreview = HexFormat.of().formatHex(b.computeBlockHash()).substring(0, 8);
+            System.out.println("Block " + i + " | hash: " + hashPreview + "... | transactions: " + b.getTransactions().size());
+        }
+        System.out.println("==========================\n");
     }
 
 }

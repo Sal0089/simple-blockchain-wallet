@@ -7,7 +7,7 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 
-/** The transaction's structure is inspired by Account-based protocols */
+/** The transaction's structure is based on Account-based protocols */
 
 public class Transaction {
     
@@ -109,5 +109,13 @@ public class Transaction {
         } catch (NoSuchAlgorithmException nsae) {
             throw new RuntimeException("Algoritmo SHA-256 non trovato", nsae);
         }
+    }
+
+    /* 
+     * Demonstrates a Tampering attack by illegally altering 
+     * the transaction amount after its creation.
+    */ 
+    public void tamperFunds(double newAmount) {
+        this.funds = newAmount;
     }
 }

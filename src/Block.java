@@ -10,9 +10,8 @@ import java.util.List;
 public class Block {
 
     /* ATTRIBUTES */
-    // Header
+    // Header - note that merkleRoot is calculated on the fly in computeBlockHash()
     private int version;
-    private byte[] merkleRoot;
     private Instant timestamp;
     private byte[] hashPointer;
     private long nonce;
@@ -33,7 +32,6 @@ public class Block {
         } else {
             this.transactions = new ArrayList<>(transPool);
         }
-        this.merkleRoot = calculateMerkleRoot(this.transactions);
     }
 
     /* METHODS */
@@ -95,10 +93,11 @@ public class Block {
         return processMerkleLevel(nextLevel);
     }
     public byte[] computeBlockHash() {
-        int totalLength = Integer.BYTES * 2+ Long.BYTES * 2 + hashPointer.length + merkleRoot.length ;
+        byte[] currentMerkleRoot = calculateMerkleRoot(this.transactions);
+        int totalLength = Integer.BYTES * 2+ Long.BYTES * 2 + hashPointer.length + currentMerkleRoot.length ;
         ByteBuffer buf = ByteBuffer.allocate(totalLength);
         buf.putInt(this.version);
-        buf.put(merkleRoot);
+        buf.put(currentMerkleRoot);
         buf.putLong(this.timestamp.toEpochMilli());
         buf.put(hashPointer);
         buf.putLong(nonce);

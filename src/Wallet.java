@@ -96,8 +96,8 @@ public class Wallet {
         this.address = deriveAddress(this.pubKey);
     }
 
-    // Function used by the wallet to sign a transaction -- TODO
-    private byte[] signTransaction(Transaction transaction) {
+    // Signs a Transaction
+    public byte[] signTransaction(Transaction transaction) {
         // Data to sign
         byte[] data = transaction.getTransactionDataBytes();
         try {
@@ -119,7 +119,7 @@ public class Wallet {
         }
     }
 
-    // Function used to transfer money into another account
+    // Transfers money into another account
     public Transaction transferMoney(String destination, double amount) {
         Transaction transaction = new Transaction(getAddress(), destination, amount, getPublicKey());
         byte[] sign = signTransaction(transaction);
@@ -127,8 +127,7 @@ public class Wallet {
         return transaction;
     }
 
-    // Function to visualize the current balance for the wallet
+    // To visualize the current balance of the wallet
     public void printBalance(Blockchain blockchain) { 
-        System.out.println("The current balance for the wallet " + getName() + " is: " + blockchain.getBalance(this.address));
-    }
+        System.out.println(getName() + " (" + this.address.substring(0, 8) + "...) - Balance: " + blockchain.getBalance(this.address));    }
 }
