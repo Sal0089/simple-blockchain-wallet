@@ -58,7 +58,7 @@ public class Demo {
         fraudTx.setSignature(malloryWallet.signTransaction(fraudTx));
 
         boolean fraudAccepted = blockchain.submitTransaction(fraudTx);
-        System.out.println("[SECURITY] Detected an attempt by Mallory to spend from Alice's address: " + (fraudAccepted ? "ACCEPTED — VULNERABILITY!" : "REJECTED — binding FAILED: the senderAddress does not match the provided pubKey"));
+        System.out.println("[SECURITY] Detected an attempt by Mallory to spend from Alice's address: " + (fraudAccepted ? "ACCEPTED - VULNERABILITY!" : "REJECTED - binding FAILED: the senderAddress does not match the provided pubKey"));
 
         // TEST 02: tampering attack
         System.out.println("\nTEST_02: SIMULATION OF A TAMPERING ATTACK:");
