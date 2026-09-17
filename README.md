@@ -16,7 +16,7 @@ java -cp bin Demo
 
 ## 1. Introduzione e obiettivi
 - **Scopo del progetto**: Il progetto ha un intento didattico e si propone di dimostrare in modo chiaro e isolato le proprietà crittografiche, di autenticazione e di immutabilità strutturale di una blockchain. L'obiettivo primario è la simulazione e rilevazione di attacchi di manomissione (tampering) dello stato e la validazione delle transazioni.
-- **Vincolo tecnico**: Il progetto utilizza esclusivamente le API standard di Java Cryptography Architecture (JCA) — pacchetti `java.security.*` — per la generazione delle chiavi (`KeyPairGenerator`, curva EC `secp256r1`), il calcolo degli hash (`MessageDigest`, SHA-256) e la firma/verifica digitale (`Signature`, `SHA256withECDSA`), senza dipendenze crittografiche esterne.
+- **Vincolo tecnico**: Il progetto utilizza esclusivamente le API standard di Java Cryptography Architecture (JCA) (pacchetti `java.security.*`) per la generazione delle chiavi (`KeyPairGenerator`, curva EC `secp256r1`), il calcolo degli hash (`MessageDigest`, SHA-256) e la firma/verifica digitale (`Signature`, `SHA256withECDSA`), senza dipendenze crittografiche esterne.
 - **Panoramica architetturale**: Il sistema è basato su un modello *Account-based*. È composto da tre macro-componenti interconnesse:
   1. **Wallet & Transaction**: Gestiscono la generazione delle coppie di chiavi asimmetriche (ECDSA su curva `secp256r1`), la derivazione dell'indirizzo tramite hash SHA-256 della chiave pubblica, la creazione delle transazioni e la loro firma digitale.
   2. **Block & Merkle Tree**: Organizzano le transazioni in una struttura a blocchi composta da Header e Payload. L'integrità del payload è garantita dal calcolo di un Merkle Tree di hash SHA-256, il cui valore *Merkle Root* viene incorporato direttamente nell'header.
@@ -121,10 +121,10 @@ Rappresenta il registro e l'orchestratore dello stato del sistema.
 - **TEST 01: Tentativo di Transazione Fraudolenta (Falsificazione Mittente)**:
   - Creazione del wallet malevolo `Mallory`.
   - Mallory tenta di spendere 300.0 dall'indirizzo di Alice verso se stessa, firmando la transazione con la propria chiave privata.
-  - **Esito atteso e osservato**: La blockchain rifiuta l'inserimento nel `mempool` poiché `verifyAddressBinding()` fallisce (l'indirizzo sorgente appartiene ad Alice, ma la chiave pubblica fornita è di Mallory) — output: `REJECTED — binding FAILED: the senderAddress does not match the provided pubKey`.
+  - **Esito atteso e osservato**: La blockchain rifiuta l'inserimento nel `mempool` poiché `verifyAddressBinding()` fallisce (l'indirizzo sorgente appartiene ad Alice, ma la chiave pubblica fornita è di Mallory), output: `REJECTED - binding FAILED: the senderAddress does not match the provided pubKey`.
 - **TEST 02: Simulazione di Attacco di Manomissione dello Stato (Tampering)**:
   - Controllo preventivo dell'integrità del registro: `checkLedgerIntegrity()` restituisce `true`.
-  - Accesso diretto al blocco 2 del `ledger` (quello contenente la transazione Alice → Bob) e alterazione del relativo importo da 500.0 a 99999.0 tramite `victimTx.tamperFunds(99999.0)` — metodo esposto esclusivamente a fini dimostrativi, per bypassare l'assenza di setter pubblici sui dati di una transazione confermata.
+  - Accesso diretto al blocco 2 del `ledger` (quello contenente la transazione Alice → Bob) e alterazione del relativo importo da 500.0 a 99999.0 tramite `victimTx.tamperFunds(99999.0)`, un metodo esposto esclusivamente a fini dimostrativi, per bypassare l'assenza di setter pubblici sui dati di una transazione confermata.
   - **Esito osservato**: il saldo di Alice, ricalcolato scansionando il registro alterato, passa da `500.0` a `-98999.0`, rendendo tangibile l'effetto distorsivo della manomissione sulla contabilità. Contestualmente, `checkLedgerIntegrity()` passa da `true` a `false`, poiché il nuovo Merkle Root (ricalcolato al volo, si veda Sezione 3.3) produce un `computeBlockHash()` del blocco 2 diverso da quello atteso dal `hashPointer` del blocco 3, rompendo la catena.
 
 ---
