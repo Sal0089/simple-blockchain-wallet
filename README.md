@@ -1,7 +1,7 @@
 # Simulazione Didattica di Blockchain ed Elaborazione di Attacchi di Tampering
 
 ## 0. Compilazione ed esecuzione
-I comandi seguenti vanno eseguiti dalla **root** del progetto (simple-blockchain-wallet).
+I comandi seguenti vanno eseguiti dalla **root** del progetto (simple-blockchain-wallet/).
 
 ### Compilazione
 Compila i sorgenti presenti in `src/` salvando i file `.class` generati nella cartella `bin/`:
