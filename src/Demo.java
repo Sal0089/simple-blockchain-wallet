@@ -66,6 +66,12 @@ public class Demo {
         
         Block targetBlock = blockchain.getLedger().get(2); // Takes a block that contains a transaction between users
         Transaction victimTx = targetBlock.getTransactions().get(0);
+        
+        // Debug: verifica quale transazione stai per manomettere
+        System.out.println("[DEBUG] About to tamper with: src=" + victimTx.getSrc().substring(0, 8) + "... dst=" + victimTx.getDst().substring(0, 8) + "... funds=" + victimTx.getFunds());
+        System.out.println("Alice address: " + aliceWallet.getAddress().substring(0, 8));
+        System.out.println("Bob address: " + bobWallet.getAddress().substring(0, 8));   
+
         System.out.println("[BALANCE] Alice's balance before tampering: " + blockchain.getBalance(aliceWallet.getAddress()));
         victimTx.tamperFunds(99999.0); // Uses a method exposed only for demonstration purposes to simulate a tampering attack
         System.out.println("[BALANCE] Alice's balance after tampering: " + blockchain.getBalance(aliceWallet.getAddress()));

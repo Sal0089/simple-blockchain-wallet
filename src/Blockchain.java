@@ -21,10 +21,19 @@ public class Blockchain {
         this.ledger.add(genesis);
     }
 
+    // Calculates the amount of funds already committed to pending transactions in the mempool
+    private double getPendingOutflow(String address) {
+        double total = 0.0;
+        for (Transaction tx: this.mempool) {
+            if (tx.getSrc().equals(address)) total += tx.getFunds();
+        }
+        return total; 
+    }
+
     // Receives a tx from the wallet, validates it and puts it in the mempool
     public boolean submitTransaction(Transaction t) {
         if (!t.isValid()) return false;
-        if (getBalance(t.getSrc()) <  t.getFunds()) return false;
+        if (getBalance(t.getSrc()) - getPendingOutflow(t.getSrc()) <  t.getFunds()) return false;
         mempool.add(t);
         return true;
     }
